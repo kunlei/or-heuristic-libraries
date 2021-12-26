@@ -1,4 +1,4 @@
-package com.or.heuristic.core.algo.tabusearch;
+package com.or.heuristic.core.algo.tabusearch.basic;
 
 import com.or.heuristic.core.util.Optimizable;
 
@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author Kunlei Lian
  */
-public interface TsApplicable extends Optimizable {
+public interface TsApplicable {
   /**
    *
    * @return
