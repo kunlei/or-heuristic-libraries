@@ -5,8 +5,10 @@ import com.or.heuristic.core.util.ObjectiveSense;
 import com.or.heuristic.core.util.Optimizable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class implements the basic workflow of the tabu search algorithm.
@@ -15,6 +17,7 @@ import java.util.*;
  */
 @Getter
 @Setter
+@Slf4j
 public class TabuSearch<K> implements Algorithm {
   private String algorithmName;
   private ObjectiveSense objectiveSense;
@@ -33,11 +36,13 @@ public class TabuSearch<K> implements Algorithm {
   public void solve() {
     int maxIter = tsConfig.getMaxIter();
     int maxIterNoImprove = tsConfig.getMaxIterNoImprove();
+    int maxRuntimeInSecs = tsConfig.getMaxRuntimeInSecs();
     int neighborSize = tsConfig.getNeighborSize();
 
     TsApplicable<K> currSolution = startingSolution;
     bestSolution = startingSolution;
 
+    long startTime = System.currentTimeMillis();
     int iterNoImprove = 0;
     for (int iter = 0; iter < maxIter; iter++) {
       // create neighboring solutions
@@ -56,29 +61,52 @@ public class TabuSearch<K> implements Algorithm {
       // choose the next solution to move to
       for (int n = 0; n < neighborSize; n++) {
         TsApplicable<K> neighbor = neighborSolutions.get(n);
+        K tabuKey = neighbor.getTabuKey();
         if (objectiveSense == ObjectiveSense.MAXIMIZE) {
-          if (neighbor.getObjective() > currSolution.getObjective()) {
+          if (!tabuTable.containsKey(tabuKey) || tabuTable.get(tabuKey) < iter) {
             currSolution = neighbor;
-            if (neighbor.getObjective() > bestSolution.getObjective()) {
-              bestSolution = neighbor;
+            if (currSolution.getObjective() > bestSolution.getObjective()) {
+              bestSolution = currSolution;
+              iterNoImprove = 0;
+              break;
             }
-            iterNoImprove = 0;
           } else {
-            K tabuKey = neighbor.getTabuKey();
-//            if (tabuTable)
+            // check aspiration criterion
+            if (neighbor.getObjective() > bestSolution.getObjective()) {
+              currSolution = neighbor;
+              bestSolution = currSolution;
+              iterNoImprove = 0;
+              break;
+            }
           }
         } else {
-          if (neighbor.getObjective() < currSolution.getObjective()) {
+          if (!tabuTable.containsKey(tabuKey) || tabuTable.get(tabuKey) < iter) {
             currSolution = neighbor;
-            if (neighbor.getObjective() < bestSolution.getObjective()) {
-              bestSolution = neighbor;
+            if (currSolution.getObjective() < bestSolution.getObjective()) {
+              bestSolution = currSolution;
+              iterNoImprove = 0;
+              break;
             }
-            iterNoImprove = 0;
           } else {
-            K tabuKey = neighbor.getTabuKey();
-
+            // check aspiration criterion
+            if (neighbor.getObjective() < bestSolution.getObjective()) {
+              currSolution = neighbor;
+              bestSolution = currSolution;
+              iterNoImprove = 0;
+              break;
+            }
           }
         }
+      }
+
+      // check stopping criteria
+      if (iterNoImprove >= maxIterNoImprove) {
+        break;
+      }
+
+      long currTime = System.currentTimeMillis();
+      if (TimeUnit.MILLISECONDS.convert(currTime - startTime, TimeUnit.SECONDS) > maxRuntimeInSecs) {
+        break;
       }
     }
   }
