@@ -7,10 +7,16 @@ import java.util.List;
 /**
  * @author Kunlei Lian
  */
-public interface TsApplicable {
+public interface TsApplicable<K> extends Optimizable {
   /**
    *
    * @return
    */
-  List<? extends TsApplicable> getNeighbors();
+  List<? extends TsApplicable<K>> getNeighbors();
+
+  /**
+   *
+   * @return
+   */
+  K getTabuKey();
 }
