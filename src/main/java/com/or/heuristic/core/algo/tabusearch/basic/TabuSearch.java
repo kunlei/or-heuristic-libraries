@@ -44,9 +44,10 @@ public class TabuSearch<K> implements Algorithm {
 
     long startTime = System.currentTimeMillis();
     int iterNoImprove = 0;
-    for (int iter = 0; iter < maxIter; iter++) {
+    int iter = 0;
+    while (true) {
       // create neighboring solutions
-      List<? extends TsApplicable<K>> neighborSolutions = currSolution.getNeighbors();
+      List<? extends TsApplicable<K>> neighborSolutions = currSolution.getNeighbors(neighborSize);
 
       // evaluate neighboring solutions
       neighborSolutions.forEach(Optimizable::computeObjective);
@@ -59,6 +60,7 @@ public class TabuSearch<K> implements Algorithm {
       }
 
       // choose the next solution to move to
+      boolean bestSolutionUpdated = false;
       for (int n = 0; n < neighborSize; n++) {
         TsApplicable<K> neighbor = neighborSolutions.get(n);
         K tabuKey = neighbor.getTabuKey();
@@ -67,6 +69,7 @@ public class TabuSearch<K> implements Algorithm {
             currSolution = neighbor;
             if (currSolution.getObjective() > bestSolution.getObjective()) {
               bestSolution = currSolution;
+              bestSolutionUpdated = true;
               iterNoImprove = 0;
               break;
             }
@@ -75,6 +78,7 @@ public class TabuSearch<K> implements Algorithm {
             if (neighbor.getObjective() > bestSolution.getObjective()) {
               currSolution = neighbor;
               bestSolution = currSolution;
+              bestSolutionUpdated = true;
               iterNoImprove = 0;
               break;
             }
@@ -99,13 +103,22 @@ public class TabuSearch<K> implements Algorithm {
         }
       }
 
+      if (!bestSolutionUpdated) {
+        iterNoImprove++;
+      }
+
+      iter++;
+      if (iter >= maxIter) {
+        break;
+      }
+
       // check stopping criteria
       if (iterNoImprove >= maxIterNoImprove) {
         break;
       }
 
       long currTime = System.currentTimeMillis();
-      if (TimeUnit.MILLISECONDS.convert(currTime - startTime, TimeUnit.SECONDS) > maxRuntimeInSecs) {
+      if (TimeUnit.SECONDS.convert(currTime - startTime, TimeUnit.MILLISECONDS) > maxRuntimeInSecs) {
         break;
       }
     }

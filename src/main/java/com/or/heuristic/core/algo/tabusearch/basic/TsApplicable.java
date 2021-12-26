@@ -12,7 +12,7 @@ public interface TsApplicable<K> extends Optimizable {
    *
    * @return
    */
-  List<? extends TsApplicable<K>> getNeighbors();
+  List<? extends TsApplicable<K>> getNeighbors(int count);
 
   /**
    *
