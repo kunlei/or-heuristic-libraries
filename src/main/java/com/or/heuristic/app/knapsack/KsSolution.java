@@ -7,15 +7,15 @@ import java.util.List;
 /**
  * @author klian
  */
-public class KsSolution implements TsApplicable {
+public class KsSolution implements TsApplicable<Integer> {
 
   @Override
-  public List<? extends TsApplicable> getNeighbors() {
+  public List<? extends TsApplicable<Integer>> getNeighbors(int count) {
     return null;
   }
 
   @Override
-  public Object getTabuKey() {
+  public Integer getTabuKey() {
     return null;
   }
 
