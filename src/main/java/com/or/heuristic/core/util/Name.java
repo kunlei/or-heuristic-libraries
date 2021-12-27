@@ -5,7 +5,7 @@ package com.or.heuristic.core.util;
  *
  * @author Kunlei Lian
  */
-public interface Algorithm {
+public interface Name {
   /**
    * This function retrieves the name of the algorithm
    *
