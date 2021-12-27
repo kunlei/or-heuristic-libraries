@@ -1,4 +1,4 @@
-package com.or.heuristic.app.knapsack;
+package com.or.heuristic.app.knapsack.solvers.tabu;
 
 import com.or.heuristic.core.algo.tabusearch.basic.TsApplicable;
 

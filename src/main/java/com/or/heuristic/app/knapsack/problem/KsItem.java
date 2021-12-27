@@ -1,4 +1,4 @@
-package com.or.heuristic.app.knapsack;
+package com.or.heuristic.app.knapsack.problem;
 
 import lombok.Builder;
 import lombok.Getter;

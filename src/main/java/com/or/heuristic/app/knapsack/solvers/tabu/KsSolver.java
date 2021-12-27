@@ -1,4 +1,4 @@
-package com.or.heuristic.app.knapsack;
+package com.or.heuristic.app.knapsack.solvers.tabu;
 
 /**
  * @author klian
