@@ -68,6 +68,8 @@ public class TabuSearch<K> implements Name {
     int iterNoImprove = 0;
     int iter = 0;
     while (true) {
+      log.info("iter = {}, currSolution.obj = {}, bestSolution.obj = {}",
+        iter, currSolution.getObjective(), bestSolution.getObjective());
       // create neighboring solutions
       List<? extends TsApplicable<K>> neighborSolutions = currSolution.getNeighbors(neighborSize);
 
