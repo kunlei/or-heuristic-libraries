@@ -11,7 +11,11 @@ public enum AlgorithmEnum {
   /**
    * tabu search
    */
-  TABU_SEARCH("Tabu Search");
+  TABU_SEARCH("Tabu Search"),
+  /**
+   * simulated annealing
+   */
+  SIMULATED_ANNEALING("Simulated Annealing");
 
   /**
    * name of the algorithm

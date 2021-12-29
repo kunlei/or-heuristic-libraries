@@ -1,7 +1,8 @@
-package com.or.heuristic.app.knapsack.solvers.tabu;
+package com.or.heuristic.app.knapsack.solvers.util;
 
 import com.or.heuristic.app.knapsack.problem.KsItem;
 import com.or.heuristic.app.knapsack.problem.KsProblem;
+import com.or.heuristic.core.algo.simulatedannealing.SaApplicable;
 import com.or.heuristic.core.algo.tabusearch.basic.TsApplicable;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,7 @@ import java.util.stream.IntStream;
  */
 @Getter
 @Setter
-public class KsSolution implements TsApplicable<Integer> {
+public class KsSolution implements TsApplicable<Integer>, SaApplicable {
   private final KsProblem problem;
   private final List<Boolean> itemSelectionFlags;
   private Integer tabuItemIdx;
@@ -74,6 +75,34 @@ public class KsSolution implements TsApplicable<Integer> {
   @Override
   public Integer getTabuKey() {
     return this.tabuItemIdx;
+  }
+
+  @Override
+  public SaApplicable getNeighbor() {
+    List<KsItem> items = problem.getItems();
+    int numItems = problem.getItems().size();
+    int capacity = problem.getCapacity();
+    int usedCapacity = IntStream.range(0, numItems)
+      .filter(this.itemSelectionFlags::get)
+      .map(i -> items.get(i).getWeight())
+      .sum();
+    SecureRandom random = new SecureRandom();
+    KsSolution neighbor = new KsSolution(this);
+    int idxToMutate = random.nextInt(numItems);
+    if (this.itemSelectionFlags.get(idxToMutate)) {
+      // in this case, the item is already selected
+      neighbor.getItemSelectionFlags().set(idxToMutate, false);
+      neighbor.setTabuItemIdx(idxToMutate);
+      return neighbor;
+    } else {
+      // in this case, the item is not currently selected
+      if (usedCapacity + items.get(idxToMutate).getWeight() <= capacity) {
+        neighbor.getItemSelectionFlags().set(idxToMutate, true);
+        neighbor.setTabuItemIdx(idxToMutate);
+        return neighbor;
+      }
+    }
+    return null;
   }
 
   @Override

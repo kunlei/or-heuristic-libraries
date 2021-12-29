@@ -2,6 +2,7 @@ package com.or.heuristic.app.knapsack.solvers.tabu;
 
 import com.or.heuristic.app.knapsack.problem.KsProblem;
 import com.or.heuristic.app.knapsack.problem.KsProblemGenerator;
+import com.or.heuristic.app.knapsack.solvers.util.KsSolution;
 import com.or.heuristic.core.algo.tabusearch.basic.TabuSearch;
 import com.or.heuristic.core.algo.tabusearch.basic.TsConfig;
 import com.or.heuristic.core.util.ObjectiveSense;

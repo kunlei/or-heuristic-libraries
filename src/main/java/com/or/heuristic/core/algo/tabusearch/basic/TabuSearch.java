@@ -1,9 +1,6 @@
 package com.or.heuristic.core.algo.tabusearch.basic;
 
-import com.or.heuristic.core.util.AlgorithmEnum;
-import com.or.heuristic.core.util.Name;
-import com.or.heuristic.core.util.ObjectiveSense;
-import com.or.heuristic.core.util.Optimizable;
+import com.or.heuristic.core.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Slf4j
-public class TabuSearch<K> implements Name {
+public class TabuSearch<K> implements Name, Solver {
   /**
    * algorithm name
    */
@@ -47,11 +44,13 @@ public class TabuSearch<K> implements Name {
 
   public TabuSearch() {
     this.algorithmName = AlgorithmEnum.TABU_SEARCH.getName();
+    this.objectiveSense = null;
     this.tsConfig = null;
     this.startingSolution = null;
     this.tabuTable = new HashMap<>();
   }
 
+  @Override
   public void solve() {
     // obtain algorithm parameters
     int maxIter = tsConfig.getMaxIter();
