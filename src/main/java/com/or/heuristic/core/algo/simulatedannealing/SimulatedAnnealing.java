@@ -17,13 +17,25 @@ import java.security.SecureRandom;
 @Setter
 @Slf4j
 public class SimulatedAnnealing implements Name, Solver {
+  /**
+   * name of the algorithm, defaulted to 'simulated annealing'
+   */
   private String algorithmName;
   /**
    * indicates whether to maximize or minimize the objective
    */
   private ObjectiveSense objectiveSense;
+  /**
+   * algorithm configuration
+   */
   private SaConfig saConfig;
+  /**
+   * initial solution to start the search
+   */
   private SaApplicable startingSolution;
+  /**
+   * best solution found during the search
+   */
   private SaApplicable bestSolution;
 
   public SimulatedAnnealing() {

@@ -15,7 +15,15 @@ public enum AlgorithmEnum {
   /**
    * simulated annealing
    */
-  SIMULATED_ANNEALING("Simulated Annealing");
+  SIMULATED_ANNEALING("Simulated Annealing"),
+  /**
+   * hill climbing
+   */
+  HILL_CLIMBING("Hill Climbing"),
+  /**
+   * genetic algorithm
+   */
+  GENETIC_ALGORITHM("Genetic Algorithm");
 
   /**
    * name of the algorithm
