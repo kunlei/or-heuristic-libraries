@@ -1,4 +1,4 @@
-package com.or.heuristic.core.algo.hillclimbing;
+package com.or.heuristic.core.algo.hc;
 
 import com.or.heuristic.core.util.AlgorithmEnum;
 import com.or.heuristic.core.util.Name;

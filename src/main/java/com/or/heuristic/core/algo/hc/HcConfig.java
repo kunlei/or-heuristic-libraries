@@ -1,4 +1,4 @@
-package com.or.heuristic.core.algo.hillclimbing;
+package com.or.heuristic.core.algo.hc;
 
 import lombok.Builder;
 import lombok.Getter;
