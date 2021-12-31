@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  *
  * @author Kunlei Lian
@@ -41,6 +43,51 @@ public class HillClimbing implements Name, Solver {
     int maxIter = hcConfig.getMaxIter();
     int maxIterNoImprove = hcConfig.getMaxIterNoImprove();
     int maxRuntimeInSecs = hcConfig.getMaxRuntimeInSecs();
+
+    HcApplicable currSolution = startingSolution;
+    bestSolution = startingSolution;
+
+    long startTime = System.currentTimeMillis();
+    int iterNoImprove = 0;
+    for (int iter = 0; iter < maxIter; iter++) {
+      HcApplicable neighbor = currSolution.getNeighbor();
+
+      neighbor.computeObjective();
+
+      double neighborObj = neighbor.getObjective();
+      double currObj = currSolution.getObjective();
+      double bestObj = bestSolution.getObjective();
+      if (objectiveSense == ObjectiveSense.MAXIMIZE) {
+        if (neighborObj > currObj) {
+          currSolution = neighbor;
+          if (neighborObj > bestObj) {
+            bestSolution = neighbor;
+            iterNoImprove = 0;
+          }
+        } else {
+          iterNoImprove++;
+        }
+      } else {
+        if (neighborObj < currObj) {
+          currSolution = neighbor;
+          if (neighborObj < bestObj) {
+            bestSolution = neighbor;
+            iterNoImprove = 0;
+          }
+        } else {
+          iterNoImprove++;
+        }
+      }
+
+      if (iterNoImprove >= maxIterNoImprove) {
+        break;
+      }
+
+      long currTime = System.currentTimeMillis();
+      if (TimeUnit.SECONDS.convert(currTime - startTime, TimeUnit.MILLISECONDS) > maxRuntimeInSecs) {
+        break;
+      }
+    }
   }
 
   @Override
