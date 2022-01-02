@@ -28,10 +28,9 @@ public final class KsSolver {
       .tabuLength(instance1.getItems().size())
       .build();
 
-    TabuSearch<Integer> tabuSearch = new TabuSearch<>();
-    tabuSearch.setObjectiveSense(ObjectiveSense.MAXIMIZE);
-    tabuSearch.setTsConfig(tsConfig);
-    tabuSearch.setStartingSolution(startingSolution);
+    TabuSearch<Integer> tabuSearch = new TabuSearch<>(ObjectiveSense.MAXIMIZE,
+      tsConfig,
+      startingSolution);
 
     tabuSearch.solve();
   }

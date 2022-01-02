@@ -5,14 +5,15 @@ import com.or.heuristic.core.util.Optimizable;
 import java.util.List;
 
 /**
- * This interface defines functions that should be implemented by solutions in order to enable tabu search.
+ * This interface defines functions that should be implemented by solutions that can be improved using tabu search.
  *
  * @author Kunlei Lian
  */
 public interface TsApplicable<K> extends Optimizable {
   /**
-   * This function create a list of neighboring solutions from the current solution.
+   * This function creates a list of neighboring solutions from the current solution.
    *
+   * @param count number of neighboring solutions to generate
    * @return neighboring solutions
    */
   List<? extends TsApplicable<K>> getNeighbors(int count);

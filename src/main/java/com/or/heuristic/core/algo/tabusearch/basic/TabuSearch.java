@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * This class implements a basic workflow of the tabu search algorithm.
  *
+ * <p>{@code K} denotes the type of the key that enters the tabu table.
+ *
  * @author Kunlei Lian
  */
 @Getter
@@ -42,11 +44,18 @@ public class TabuSearch<K> implements Name, Solver {
    */
   private final Map<K, Integer> tabuTable;
 
-  public TabuSearch() {
+  /**
+   * Constructor
+   *
+   * @param objectiveSense objective sense that dictates whether to maximize of minimize the objective function
+   * @param tsConfig algorithm configurations
+   * @param startingSolution starting solution
+   */
+  public TabuSearch(ObjectiveSense objectiveSense, TsConfig tsConfig, TsApplicable<K> startingSolution) {
     this.algorithmName = AlgorithmEnum.TABU_SEARCH.getName();
-    this.objectiveSense = null;
-    this.tsConfig = null;
-    this.startingSolution = null;
+    this.objectiveSense = objectiveSense;
+    this.tsConfig = tsConfig;
+    this.startingSolution = startingSolution;
     this.tabuTable = new HashMap<>();
   }
 
@@ -69,10 +78,8 @@ public class TabuSearch<K> implements Name, Solver {
     while (true) {
       log.info("iter = {}, currSolution.obj = {}, bestSolution.obj = {}",
         iter, currSolution.getObjective(), bestSolution.getObjective());
-      // create neighboring solutions
+      // create neighboring solutions and compute their objective values
       List<? extends TsApplicable<K>> neighborSolutions = currSolution.getNeighbors(neighborSize);
-
-      // evaluate neighboring solutions
       neighborSolutions.forEach(Optimizable::computeObjective);
 
       // sort neighboring solutions based on objective sense
@@ -96,7 +103,6 @@ public class TabuSearch<K> implements Name, Solver {
             if (currSolution.getObjective() > bestSolution.getObjective()) {
               bestSolution = currSolution;
               bestSolutionUpdated = true;
-              iterNoImprove = 0;
               break;
             }
           } else {
@@ -106,7 +112,6 @@ public class TabuSearch<K> implements Name, Solver {
               bestSolution = currSolution;
               currSolutionUpdated = true;
               bestSolutionUpdated = true;
-              iterNoImprove = 0;
               break;
             }
           }
@@ -117,7 +122,6 @@ public class TabuSearch<K> implements Name, Solver {
             if (currSolution.getObjective() < bestSolution.getObjective()) {
               bestSolution = currSolution;
               bestSolutionUpdated = true;
-              iterNoImprove = 0;
               break;
             }
           } else {
@@ -127,7 +131,6 @@ public class TabuSearch<K> implements Name, Solver {
               bestSolution = currSolution;
               currSolutionUpdated = true;
               bestSolutionUpdated = true;
-              iterNoImprove = 0;
               break;
             }
           }
@@ -138,25 +141,11 @@ public class TabuSearch<K> implements Name, Solver {
       if (currSolutionUpdated) {
         tabuTable.put(tabuKey, iter + tabuLength);
       }
+      iterNoImprove = bestSolutionUpdated ? 0 : iterNoImprove + 1;
 
-      if (!bestSolutionUpdated) {
-        iterNoImprove++;
-      }
-
-      // check if maximum iteration count has been reached or not
-      iter++;
-      if (iter >= maxIter) {
-        break;
-      }
-
-      // check whether the best objective has not been improved within allowed number of iterations
-      if (iterNoImprove >= maxIterNoImprove) {
-        break;
-      }
-
-      // check runtime limit
-      long currTime = System.currentTimeMillis();
-      if (TimeUnit.SECONDS.convert(currTime - startTime, TimeUnit.MILLISECONDS) > maxRuntimeInSecs) {
+      // check stopping criteria
+      long elapsedSecs = TimeUnit.SECONDS.convert(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
+      if (iter++ >= maxIter || iterNoImprove >= maxIterNoImprove || elapsedSecs >= maxRuntimeInSecs) {
         break;
       }
     }
