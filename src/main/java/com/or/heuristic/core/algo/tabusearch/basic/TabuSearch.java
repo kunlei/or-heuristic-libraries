@@ -9,7 +9,11 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class implements a basic workflow of the tabu search algorithm.
+ * This class implements the simple tabu search algorithm described in the following paper:
+ * <ul>
+ *   <li>Glover, Fred. “Tabu Search—Part I.” ORSA Journal on Computing 1, no. 3 (August 1, 1989): 190–206.
+ *   https://doi.org/10.1287/ijoc.1.3.190.</li>
+ * </ul>
  *
  * <p>{@code K} denotes the type of the key that enters the tabu table.
  *
