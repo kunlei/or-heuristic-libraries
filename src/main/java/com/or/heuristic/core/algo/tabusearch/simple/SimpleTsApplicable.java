@@ -1,4 +1,4 @@
-package com.or.heuristic.core.algo.tabusearch.basic;
+package com.or.heuristic.core.algo.tabusearch.simple;
 
 import com.or.heuristic.core.util.Optimizable;
 
@@ -9,14 +9,16 @@ import java.util.List;
  *
  * @author Kunlei Lian
  */
-public interface TsApplicable<K> extends Optimizable {
+public interface SimpleTsApplicable<K> extends Optimizable {
   /**
    * This function creates a list of neighboring solutions from the current solution.
+   * Each neighboring solution should contain a key that represents the move that leads the current solution to the new
+   * solution. This key will be used within tabu search algorithm.
    *
    * @param count number of neighboring solutions to generate
    * @return neighboring solutions
    */
-  List<? extends TsApplicable<K>> getNeighbors(int count);
+  List<? extends SimpleTsApplicable<K>> getNeighbors(int count);
 
   /**
    * This function retrieves the tabu key of the current solution.

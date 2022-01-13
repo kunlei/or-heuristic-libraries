@@ -3,8 +3,8 @@ package com.or.heuristic.app.knapsack.solvers.tabu;
 import com.or.heuristic.app.knapsack.problem.KsProblem;
 import com.or.heuristic.app.knapsack.problem.KsProblemGenerator;
 import com.or.heuristic.app.knapsack.solvers.util.KsSolution;
-import com.or.heuristic.core.algo.tabusearch.basic.TabuSearch;
-import com.or.heuristic.core.algo.tabusearch.basic.TsConfig;
+import com.or.heuristic.core.algo.tabusearch.simple.SimpleTabuSearch;
+import com.or.heuristic.core.algo.tabusearch.simple.SimpleTsConfig;
 import com.or.heuristic.core.util.ObjectiveSense;
 
 /**
@@ -20,7 +20,7 @@ public final class KsSolver {
     // create starting solution
     KsSolution startingSolution = new KsSolution(instance1);
 
-    TsConfig tsConfig = TsConfig.builder()
+    SimpleTsConfig simpleTsConfig = SimpleTsConfig.builder()
       .maxIter(1000)
       .maxIterNoImprove(50)
       .maxRuntimeInSecs(600)
@@ -28,8 +28,8 @@ public final class KsSolver {
       .tabuLength(instance1.getItems().size())
       .build();
 
-    TabuSearch<Integer> tabuSearch = new TabuSearch<>(ObjectiveSense.MAXIMIZE,
-      tsConfig,
+    SimpleTabuSearch<Integer> tabuSearch = new SimpleTabuSearch<>(ObjectiveSense.MAXIMIZE,
+      simpleTsConfig,
       startingSolution);
 
     tabuSearch.solve();

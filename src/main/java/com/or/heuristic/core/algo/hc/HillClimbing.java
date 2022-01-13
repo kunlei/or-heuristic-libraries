@@ -3,7 +3,7 @@ package com.or.heuristic.core.algo.hc;
 import com.or.heuristic.core.util.AlgorithmEnum;
 import com.or.heuristic.core.util.Name;
 import com.or.heuristic.core.util.ObjectiveSense;
-import com.or.heuristic.core.util.Solver;
+import com.or.heuristic.core.util.Algorithm;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Slf4j
-public class HillClimbing implements Name, Solver {
+public class HillClimbing implements Name, Algorithm {
   /**
    * name of the algorithm, defaulted to 'simulated annealing'
    */

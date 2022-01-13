@@ -3,7 +3,7 @@ package com.or.heuristic.app.knapsack.solvers.util;
 import com.or.heuristic.app.knapsack.problem.KsItem;
 import com.or.heuristic.app.knapsack.problem.KsProblem;
 import com.or.heuristic.core.algo.simulatedannealing.SaApplicable;
-import com.or.heuristic.core.algo.tabusearch.basic.TsApplicable;
+import com.or.heuristic.core.algo.tabusearch.simple.SimpleTsApplicable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
  */
 @Getter
 @Setter
-public class KsSolution implements TsApplicable<Integer>, SaApplicable {
+public class KsSolution implements SimpleTsApplicable<Integer>, SaApplicable {
   private final KsProblem problem;
   private final List<Boolean> itemSelectionFlags;
   private Integer tabuItemIdx;
@@ -42,7 +42,7 @@ public class KsSolution implements TsApplicable<Integer>, SaApplicable {
   }
 
   @Override
-  public List<? extends TsApplicable<Integer>> getNeighbors(int count) {
+  public List<? extends SimpleTsApplicable<Integer>> getNeighbors(int count) {
     List<KsSolution> neighbors = new ArrayList<>(count);
     SecureRandom random = new SecureRandom();
     List<KsItem> items = problem.getItems();

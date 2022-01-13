@@ -1,16 +1,16 @@
-package com.or.heuristic.core.algo.tabusearch.basic;
+package com.or.heuristic.core.algo.tabusearch.simple;
 
 import lombok.Builder;
 import lombok.Getter;
 
 /**
- * This class defines the required parameters of the tabu search algorithm.
+ * This class defines the required parameters of the simple tabu search algorithm.
  *
  * @author Kunlei Lian
  */
 @Getter
 @Builder
-public final class TsConfig {
+public final class SimpleTsConfig {
   /**
    * the number of iterations that a move is forbidden
    */
