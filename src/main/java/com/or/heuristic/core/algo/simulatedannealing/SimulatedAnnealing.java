@@ -1,9 +1,8 @@
 package com.or.heuristic.core.algo.simulatedannealing;
 
-import com.or.heuristic.core.util.AlgorithmEnum;
-import com.or.heuristic.core.util.Name;
-import com.or.heuristic.core.util.ObjectiveSense;
 import com.or.heuristic.core.util.Algorithm;
+import com.or.heuristic.core.util.AlgorithmEnum;
+import com.or.heuristic.core.util.ObjectiveSense;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import java.security.SecureRandom;
 @Getter
 @Setter
 @Slf4j
-public class SimulatedAnnealing implements Name, Algorithm {
+public class SimulatedAnnealing extends Algorithm {
   /**
    * name of the algorithm, defaulted to 'simulated annealing'
    */
@@ -39,7 +38,7 @@ public class SimulatedAnnealing implements Name, Algorithm {
   private SaApplicable bestSolution;
 
   public SimulatedAnnealing() {
-    this.algorithmName = AlgorithmEnum.SIMULATED_ANNEALING.getName();
+    super(AlgorithmEnum.SIMULATED_ANNEALING.getName());
     this.objectiveSense = null;
     this.saConfig = null;
     this.startingSolution = null;

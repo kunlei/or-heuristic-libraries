@@ -133,9 +133,10 @@ public class SimpleTabuSearch<K> extends Algorithm {
       tabuTable.put(tabuKey, iter + tabuLength);
 
       // cleanup tabu table
-      for (K key : tabuTable.keySet()) {
-        if (tabuTable.get(key) < iter) {
-          tabuTable.remove(key);
+      for (Iterator<Map.Entry<K, Integer>> it = tabuTable.entrySet().iterator(); it.hasNext();) {
+        Map.Entry<K, Integer> entry = it.next();
+        if (entry.getValue() < iter) {
+          it.remove();
         }
       }
 
