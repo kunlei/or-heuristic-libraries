@@ -7,6 +7,9 @@ import com.or.heuristic.core.algo.tabusearch.simple.SimpleTabuSearch;
 import com.or.heuristic.core.algo.tabusearch.simple.SimpleTsConfig;
 import com.or.heuristic.core.util.ObjectiveSense;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author klian
  */
@@ -18,7 +21,8 @@ public final class KsSolver {
     KsProblem instance1 = problemGenerator.getInstance1();
 
     // create starting solution
-    KsSolution startingSolution = new KsSolution(instance1);
+    List<KsSolution> startingSolutions = Collections.singletonList(new KsSolution(instance1));
+
 
     SimpleTsConfig simpleTsConfig = SimpleTsConfig.builder()
       .maxIter(1000)
@@ -28,9 +32,9 @@ public final class KsSolver {
       .tabuLength(instance1.getItems().size())
       .build();
 
-    SimpleTabuSearch<Integer> tabuSearch = new SimpleTabuSearch<>(ObjectiveSense.MAXIMIZE,
+    SimpleTabuSearch<Integer> tabuSearch = new SimpleTabuSearch<Integer>(ObjectiveSense.MAXIMIZE,
       simpleTsConfig,
-      startingSolution);
+      startingSolutions);
 
     tabuSearch.solve();
   }

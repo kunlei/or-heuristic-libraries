@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * This class implements the simple tabu search algorithm described in the following paper:
@@ -33,7 +34,7 @@ public class SimpleTabuSearch<K> extends Algorithm {
   /**
    * starting solution
    */
-  private SimpleTsApplicable<K> startingSolution;
+  private List<? extends SimpleTsApplicable<K>> startingSolutions;
   /**
    * best solution encountered during the search process
    */
@@ -52,16 +53,21 @@ public class SimpleTabuSearch<K> extends Algorithm {
    *
    * @param objectiveSense objective sense that dictates whether to maximize of minimize the objective function
    * @param simpleTsConfig algorithm configurations
-   * @param startingSolution starting solution
+   * @param startingSolutions starting solutions
    */
-  public SimpleTabuSearch(ObjectiveSense objectiveSense, SimpleTsConfig simpleTsConfig, SimpleTsApplicable<K> startingSolution) {
+  public SimpleTabuSearch(ObjectiveSense objectiveSense, SimpleTsConfig simpleTsConfig,
+                          List<? extends SimpleTsApplicable<K>> startingSolutions) {
     super(AlgorithmEnum.TABU_SEARCH.getName());
     this.objectiveSense = objectiveSense;
     this.simpleTsConfig = simpleTsConfig;
-    this.startingSolution = startingSolution;
-    this.bestSolution = startingSolution;
+    this.startingSolutions = startingSolutions;
     this.tabuTable = new HashMap<>();
     this.solutionComparator = new SolutionComparator<>(this.objectiveSense);
+    this.bestSolution = startingSolutions.stream()
+      .sorted(solutionComparator)
+      .limit(1)
+      .collect(Collectors.toList())
+      .get(0);
   }
 
   @Override
@@ -73,8 +79,8 @@ public class SimpleTabuSearch<K> extends Algorithm {
     int neighborSize = simpleTsConfig.getNeighborSize();
     int tabuLength = simpleTsConfig.getTabuLength();
 
-    // use the starting solution as the current solution
-    SimpleTsApplicable<K> currSolution = startingSolution;
+    // use the best solution from the given set of starting solution as the current solution
+    SimpleTsApplicable<K> currSolution = bestSolution;
 
     long startTime = System.currentTimeMillis();
     int iterNoImprove = 0;
@@ -96,8 +102,8 @@ public class SimpleTabuSearch<K> extends Algorithm {
       for (SimpleTsApplicable<K> neighbor : neighborSolutions) {
         tabuKey = neighbor.getTabuKey();
         if (!tabuTable.containsKey(tabuKey) || tabuTable.get(tabuKey) < iter) {
-          // in this case, the move that leads to the neighboring solution is either not in the tabu table or its tabu
-          // status has expired
+          // in this case, the move that leads to the neighboring solution is
+          // either not in the tabu table or its tabu status has expired
           currSolution = neighbor;
           currSolutionUpdated = true;
           if (solutionComparator.compare(currSolution, bestSolution) < 0) {
@@ -117,15 +123,30 @@ public class SimpleTabuSearch<K> extends Algorithm {
         }
       }
 
-      // update tabu table if applicable
-      if (currSolutionUpdated) {
-        tabuTable.put(tabuKey, iter + tabuLength);
+      // in case no move is possible, choose the best neighbor
+      if (!currSolutionUpdated) {
+        currSolution = neighborSolutions.iterator().next();
       }
-      iterNoImprove = bestSolutionUpdated ? 0 : iterNoImprove + 1;
+
+      // update tabu table if applicable
+      tabuKey = currSolution.getTabuKey();
+      tabuTable.put(tabuKey, iter + tabuLength);
+
+      // cleanup tabu table
+      for (K key : tabuTable.keySet()) {
+        if (tabuTable.get(key) < iter) {
+          tabuTable.remove(key);
+        }
+      }
 
       // check stopping criteria
-      long elapsedSecs = TimeUnit.SECONDS.convert(System.currentTimeMillis() - startTime, TimeUnit.MILLISECONDS);
-      if (iter++ >= maxIter || iterNoImprove >= maxIterNoImprove || elapsedSecs >= maxRuntimeInSecs) {
+      iterNoImprove = bestSolutionUpdated ? 0 : iterNoImprove + 1;
+      long elapsedSecs = TimeUnit.SECONDS
+        .convert(System.currentTimeMillis() - startTime,
+          TimeUnit.MILLISECONDS);
+      if (iter++ >= maxIter ||
+        iterNoImprove >= maxIterNoImprove ||
+        elapsedSecs >= maxRuntimeInSecs) {
         break;
       }
     }
