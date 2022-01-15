@@ -20,8 +20,6 @@ public interface GaApplicable extends Optimizable {
   /**
    * This function creates a new solution by making a slight modification of the current solution. It's assumed that the
    * mutated solution refers to the same solution as the current solution and no copy is made.
-   *
-   * @return a mutated solution
    */
-  GaApplicable mutation();
+  void mutation();
 }

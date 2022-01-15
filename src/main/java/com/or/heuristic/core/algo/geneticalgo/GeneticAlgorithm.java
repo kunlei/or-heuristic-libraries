@@ -1,9 +1,6 @@
 package com.or.heuristic.core.algo.geneticalgo;
 
-import com.or.heuristic.core.util.Algorithm;
-import com.or.heuristic.core.util.AlgorithmEnum;
-import com.or.heuristic.core.util.ObjectiveSense;
-import com.or.heuristic.core.util.SolutionComparator;
+import com.or.heuristic.core.util.*;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -40,6 +37,7 @@ public class GeneticAlgorithm extends Algorithm {
     int maxIter = gaConfig.getMaxIter();
     int maxIterNoImprove = gaConfig.getMaxIterNoImprove();
     int maxRuntimeInSecs = gaConfig.getMaxRuntimeInSecs();
+    double mutationProbability = gaConfig.getMutationProbability();
     double elitePreserveProportion = gaConfig.getElitePreserveProportion();
 
     SecureRandom random = new SecureRandom();
@@ -52,8 +50,15 @@ public class GeneticAlgorithm extends Algorithm {
       List<GaApplicable> newPopulation = createNewPopulation(currPopulation);
 
       // mutation
+      newPopulation.forEach(solution -> {
+        if (random.nextDouble() <= mutationProbability) {
+          solution.mutation();
+        }
+      });
 
       // combine the two population
+      currPopulation.addAll(newPopulation);
+      currPopulation.sort(solutionComparator);
 
       // check stopping criteria
       long elapsedSecs = TimeUnit.SECONDS
@@ -67,8 +72,25 @@ public class GeneticAlgorithm extends Algorithm {
     }
   }
 
+  /**
+   * create a new population
+   * @param currPopulation current population
+   * @return a newly created population
+   */
   private List<GaApplicable> createNewPopulation(List<GaApplicable> currPopulation) {
+    int populationSize = currPopulation.size();
+    List<Double> objectives = currPopulation.stream()
+      .map(Optimizable::getObjective)
+      .collect(Collectors.toList());
 
-    return null;
+    List<GaApplicable> newPopulation = new ArrayList<>(populationSize);
+    for (int i = 0; i < populationSize; i++) {
+
+    }
+    return newPopulation;
+  }
+
+  private int rouletteWheelSelection(List<Double> objectives, double probability) {
+
   }
 }
