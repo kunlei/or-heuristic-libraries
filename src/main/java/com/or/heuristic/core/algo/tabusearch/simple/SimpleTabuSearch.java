@@ -9,13 +9,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * This class implements the simple tabu search algorithm described in the following paper:
+ * This class implements the simple tabu search algorithm described in the paper:
  * <ul>
  *   <li>Glover, Fred. “Tabu Search—Part I.” ORSA Journal on Computing 1, no. 3 (August 1, 1989): 190–206.
  *   https://doi.org/10.1287/ijoc.1.3.190.</li>
  * </ul>
  *
- * <p>{@code K} denotes the type of the key that enters the tabu table.
+ * <p>{@code K} denotes the type of the move that leads to a neighboring solution.
  *
  * @author Kunlei Lian
  */
@@ -32,7 +32,7 @@ public class SimpleTabuSearch<K> extends Algorithm {
    */
   private SimpleTsConfig simpleTsConfig;
   /**
-   * starting solution
+   * starting solutions
    */
   private List<? extends SimpleTsApplicable<K>> startingSolutions;
   /**
@@ -98,7 +98,7 @@ public class SimpleTabuSearch<K> extends Algorithm {
       // choose the next solution to move to
       boolean currSolutionUpdated = false;
       boolean bestSolutionUpdated = false;
-      K tabuKey = null;
+      K tabuKey;
       for (SimpleTsApplicable<K> neighbor : neighborSolutions) {
         tabuKey = neighbor.getTabuKey();
         if (!tabuTable.containsKey(tabuKey) || tabuTable.get(tabuKey) < iter) {
