@@ -20,6 +20,10 @@ public final class GaConfig {
    */
   private final double mutationProbability;
   /**
+   * preserve proportion of elite solutions
+   */
+  private final double elitePreserveProportion;
+  /**
    * the maximum number of iterations to search
    */
   private final int maxIter;

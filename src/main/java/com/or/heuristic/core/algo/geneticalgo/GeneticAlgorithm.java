@@ -5,6 +5,8 @@ import com.or.heuristic.core.util.AlgorithmEnum;
 import com.or.heuristic.core.util.ObjectiveSense;
 import com.or.heuristic.core.util.SolutionComparator;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -38,14 +40,20 @@ public class GeneticAlgorithm extends Algorithm {
     int maxIter = gaConfig.getMaxIter();
     int maxIterNoImprove = gaConfig.getMaxIterNoImprove();
     int maxRuntimeInSecs = gaConfig.getMaxRuntimeInSecs();
+    double elitePreserveProportion = gaConfig.getElitePreserveProportion();
 
+    SecureRandom random = new SecureRandom();
     long startTime = System.currentTimeMillis();
     int iterNoImprove = 0;
     int iter = 0;
+    List<GaApplicable> currPopulation = new ArrayList<>(startingPopulation);
     while (true) {
       // crossover
+      List<GaApplicable> newPopulation = createNewPopulation(currPopulation);
 
       // mutation
+
+      // combine the two population
 
       // check stopping criteria
       long elapsedSecs = TimeUnit.SECONDS
@@ -57,5 +65,10 @@ public class GeneticAlgorithm extends Algorithm {
         break;
       }
     }
+  }
+
+  private List<GaApplicable> createNewPopulation(List<GaApplicable> currPopulation) {
+
+    return null;
   }
 }
