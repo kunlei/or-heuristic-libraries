@@ -1,5 +1,10 @@
 ## Dev Log
 
+### 01/14/2022
+
+1. revise simulated annealing.
+2. work on genetic algorithm.
+
 ### 01/13/2022
 
 1. rename tabu search to SimpleTabuSearch.

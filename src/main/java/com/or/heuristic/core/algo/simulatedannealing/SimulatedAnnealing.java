@@ -100,7 +100,7 @@ public class SimulatedAnnealing extends Algorithm {
       } else {
         double currObj = currSolution.getObjective();
         double neighborObj = neighbor.getObjective();
-        if (Math.exp((neighborObj - currObj) / currTemperature) > random.nextDouble()) {
+        if (Math.exp(-Math.abs(neighborObj - currObj) / currTemperature) > random.nextDouble()) {
           currSolution = neighbor;
         }
       }
