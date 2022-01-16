@@ -3,11 +3,14 @@ package com.or.heuristic.core.algo.hc;
 import com.or.heuristic.core.util.Algorithm;
 import com.or.heuristic.core.util.AlgorithmEnum;
 import com.or.heuristic.core.util.ObjectiveSense;
+import com.or.heuristic.core.util.SolutionComparator;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -18,23 +21,38 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class HillClimbing extends Algorithm {
   /**
-   * name of the algorithm, defaulted to 'simulated annealing'
-   */
-  private String algorithmName;
-  /**
    * indicates whether to maximize or minimize the objective
    */
   private ObjectiveSense objectiveSense;
+  /**
+   * configuration
+   */
   private HcConfig hcConfig;
-  private HcApplicable startingSolution;
+  /**
+   * starting solutions
+   */
+  private List<? extends HcApplicable> startingSolutions;
+  /**
+   * best solution encountered during the search process
+   */
   private HcApplicable bestSolution;
+  /**
+   * solution comparator
+   */
+  private final SolutionComparator<HcApplicable> solutionComparator;
 
-  public HillClimbing() {
+  public HillClimbing(ObjectiveSense objectiveSense, HcConfig hcConfig,
+                      List<? extends HcApplicable> startingSolutions) {
     super(AlgorithmEnum.HILL_CLIMBING.getName());
-    this.objectiveSense = null;
-    this.hcConfig = null;
-    this.startingSolution = null;
-    this.bestSolution = null;
+    this.objectiveSense = objectiveSense;
+    this.hcConfig = hcConfig;
+    this.startingSolutions = startingSolutions;
+    this.solutionComparator = new SolutionComparator<>(this.objectiveSense);
+    this.bestSolution = startingSolutions.stream()
+      .sorted(solutionComparator)
+      .limit(1)
+      .collect(Collectors.toList())
+      .get(0);
   }
 
   @Override
@@ -43,59 +61,33 @@ public class HillClimbing extends Algorithm {
     int maxIterNoImprove = hcConfig.getMaxIterNoImprove();
     int maxRuntimeInSecs = hcConfig.getMaxRuntimeInSecs();
 
-    HcApplicable currSolution = startingSolution;
-    bestSolution = startingSolution;
+    HcApplicable currSolution = bestSolution;
 
     long startTime = System.currentTimeMillis();
     int iterNoImprove = 0;
-    for (int iter = 0; iter < maxIter; iter++) {
+    int iter = 0;
+    while (true) {
       HcApplicable neighbor = currSolution.getNeighbor();
-
       neighbor.computeObjective();
 
-      double neighborObj = neighbor.getObjective();
-      double currObj = currSolution.getObjective();
-      double bestObj = bestSolution.getObjective();
-      if (objectiveSense == ObjectiveSense.MAXIMIZE) {
-        if (neighborObj > currObj) {
-          currSolution = neighbor;
-          if (neighborObj > bestObj) {
-            bestSolution = neighbor;
-            iterNoImprove = 0;
-          }
-        } else {
-          iterNoImprove++;
-        }
-      } else {
-        if (neighborObj < currObj) {
-          currSolution = neighbor;
-          if (neighborObj < bestObj) {
-            bestSolution = neighbor;
-            iterNoImprove = 0;
-          }
+      if (solutionComparator.compare(neighbor, currSolution) < 0) {
+        currSolution = neighbor;
+        if (solutionComparator.compare(neighbor, bestSolution) < 0) {
+          bestSolution = neighbor;
+          iterNoImprove = 0;
         } else {
           iterNoImprove++;
         }
       }
 
-      if (iterNoImprove >= maxIterNoImprove) {
-        break;
-      }
-
-      long currTime = System.currentTimeMillis();
-      if (TimeUnit.SECONDS.convert(currTime - startTime, TimeUnit.MILLISECONDS) > maxRuntimeInSecs) {
+      long elapsedSecs = TimeUnit.SECONDS
+        .convert(System.currentTimeMillis() - startTime,
+          TimeUnit.MILLISECONDS);
+      if (iter++ >= maxIter ||
+        iterNoImprove >= maxIterNoImprove ||
+        elapsedSecs >= maxRuntimeInSecs) {
         break;
       }
     }
-  }
-
-  @Override
-  public String getName() {
-    return algorithmName;
-  }
-
-  @Override
-  public void setName(String name) {
-    this.algorithmName = name;
   }
 }
